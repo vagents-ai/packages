@@ -1,0 +1,18 @@
+name: code-review
+version: 0.1.0
+description: An agent that performs a basic review of a given code snippet.
+author: AI Assistant
+repository_url: https://example.com/vagents/code-review
+entry_point: reviewer.CodeReviewer
+python_version: ">=3.8"
+tags:
+  - code
+  - review
+  - quality
+arguments:
+  - name: dir
+    type: str
+    help: The directory containing the code or files to be reviewed.
+    required: false
+    short: d
+    default: .
