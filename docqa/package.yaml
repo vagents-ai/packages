@@ -1,0 +1,22 @@
+name: docqa
+version: 0.1.0
+description: Question answering and summarization over a document from stdin or file.
+author: AI Assistant
+repository_url: https://example.com/vagents/docqa
+entry_point: qa.DocQA
+python_version: ">=3.8"
+tags:
+  - docs
+  - qa
+  - summary
+arguments:
+  - name: question
+    type: str
+    help: The question to ask; use 'summarize' to summarize the document.
+    required: true
+    short: q
+  - name: file
+    type: str
+    help: Path to a file to read; if omitted, stdin is used.
+    required: false
+    short: f

@@ -45,10 +45,13 @@ Here is the diff:
 {diff_content}
 ```
 """
-
         try:
-            # We assume the LLM client has an `ask` method that takes a prompt and returns the response.
-            review_summary = await self.llm.ask(prompt)
-            return AgentOutput(input_id=input.id, result={"summary": review_summary})
+            review_summary = await self.llm(messages=[
+                {"role": "user", "content": prompt}
+            ])
+            review_summary = review_summary['choices'][0]['message']['content']
+            return AgentOutput(input_id=input.id, result={
+                "content": review_summary
+            })
         except Exception as e:
             return AgentOutput(input_id=input.id, error=f"Failed to get review from LLM: {e}")
