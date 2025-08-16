@@ -5,6 +5,8 @@ author: AI Assistant
 repository_url: https://example.com/vagents/docqa
 entry_point: qa.DocQA
 python_version: ">=3.8"
+dependencies:
+  - pymupdf4llm
 tags:
   - docs
   - qa
