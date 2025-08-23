@@ -1,4 +1,5 @@
 import subprocess
+import asyncio
 from vagents.core.module import AgentModule
 from vagents.core import AgentInput, AgentOutput, LM
 
@@ -84,14 +85,18 @@ class CodeReviewer(AgentModule):
                 return AgentOutput(input_id=input.id, result={"content": review_summary})
 
             # Large diff: summarize each chunk, then consolidate
-            chunk_summaries = []
             total = len(chunks)
-            for i, chunk in enumerate(chunks, start=1):
-                try:
-                    summary = await summarize_chunk(i, total, chunk)
-                except Exception as e:
-                    return AgentOutput(input_id=input.id, error=f"Failed to get summary for chunk {i}: {e}")
-                chunk_summaries.append({"part": i, "summary": summary})
+            # Launch summarization for all chunks concurrently and gather results.
+            tasks = [asyncio.create_task(summarize_chunk(i, total, chunk))
+                     for i, chunk in enumerate(chunks, start=1)]
+
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+
+            chunk_summaries = []
+            for i, res in enumerate(results, start=1):
+                if isinstance(res, Exception):
+                    return AgentOutput(input_id=input.id, error=f"Failed to get summary for chunk {i}: {res}")
+                chunk_summaries.append({"part": i, "summary": res})
 
             # Consolidate chunk summaries into a single final review
             consolidation_prompt = (
